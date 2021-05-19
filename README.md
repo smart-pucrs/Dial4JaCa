@@ -10,5 +10,5 @@ By [Débora Engelmann](https://github.com/DeboraEngelmann),
 
 You will find all the necessary documentation on our [Wiki](https://github.com/smart-pucrs/DialForJaCa/wiki).
 
-> Part of the code used in this project is authored by [Jomi F. Hubner](https://github.com/jomifred) and [Cleber Jorge Amaral](https://github.com/cleberjamaral) available in [JaCaMo-Rest](https://github.com/jacamo-lang/jacamo-rest).
+> Part of the code used in this project is developed by [Jomi F. Hubner](https://github.com/jomifred) and [Cleber Jorge Amaral](https://github.com/cleberjamaral) available in [JaCaMo-Rest](https://github.com/jacamo-lang/jacamo-rest).
 
