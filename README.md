@@ -1,4 +1,4 @@
-# DialForJaCa
+# Dial4JaCa
 
 By [Débora Engelmann](https://github.com/DeboraEngelmann), 
 [Juliana Damasio Oliveira](https://github.com/julianadamasio), 
