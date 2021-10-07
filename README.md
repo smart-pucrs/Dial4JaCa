@@ -14,6 +14,6 @@ You will find all the necessary documentation on our [Wiki](https://github.com/s
 
 ## Demo
 
-A demonstration of using Dial4JaCa is available on [youtube](https://www.youtube.com/watch?v=wkhWDbqYjKA):
+A demonstration of Dial4JaCa is available on [youtube](https://www.youtube.com/watch?v=wkhWDbqYjKA):
 
 [![Watch the video](https://img.youtube.com/vi/wkhWDbqYjKA/maxresdefault.jpg)](https://youtu.be/wkhWDbqYjKA)
