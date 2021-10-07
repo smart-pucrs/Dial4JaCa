@@ -12,3 +12,8 @@ You will find all the necessary documentation on our [Wiki](https://github.com/s
 
 > Part of the code used in this project is developed by [Jomi F. Hubner](https://github.com/jomifred) and [Cleber Jorge Amaral](https://github.com/cleberjamaral) available in [JaCaMo-Rest](https://github.com/jacamo-lang/jacamo-rest).
 
+## Demo
+
+A demonstration of using Dial4JaCa is available on [youtube](https://www.youtube.com/watch?v=wkhWDbqYjKA):
+
+[![Watch the video](https://img.youtube.com/vi/wkhWDbqYjKA/maxresdefault.jpg)](https://youtu.be/wkhWDbqYjKA)
