@@ -1,6 +1,6 @@
-// CArtAgO artifact code for project helloworld_from_jason
+// CArtAgO artifact code by Dial4JaCa
 
-package br.pucrs.smart;
+package br.pucrs.smart.Dial4JaCa;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,24 +8,28 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
-import br.pucrs.smart.interfaces.IAgent;
-import br.pucrs.smart.models.FollowupEventInput;
-import br.pucrs.smart.models.OutputContexts;
-import br.pucrs.smart.models.ResponseDialogflow;
+import br.pucrs.smart.Dial4JaCa.interfaces.IAgent;
+import br.pucrs.smart.Dial4JaCa.models.FollowupEventInput;
+import br.pucrs.smart.Dial4JaCa.models.OutputContexts;
+import br.pucrs.smart.Dial4JaCa.models.ResponseDialogflow;
 import cartago.*;
 import jason.asSyntax.ASSyntax;
 import jason.asSyntax.ListTerm;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Term;
 
-public class IntegrationArtifact extends Artifact implements IAgent {
-	private Logger logger = Logger.getLogger("ArtefatoIntegracao." + IntegrationArtifact.class.getName());
+public class Dial4JaCaArtifact extends Artifact implements IAgent {
+	//private Logger logger = Logger.getLogger("Dial4JaCaArtifact." + Dial4JaCaArtifact.class.getName());
 	String jasonResponse = null;
+	Boolean awaitingResponse = true;
+	Boolean generatedEvent = false;
+	String intentEvent = "";
 	OutputContexts jasonOutputContext = null;
 	String session = null;
 	FollowupEventInput followupEventInput = null;
+	HashMap<String, Object> jasonOutputParameters = null;
 	
 	void init() {
 		RestImpl.setListener(this);
@@ -41,36 +45,48 @@ public class IntegrationArtifact extends Artifact implements IAgent {
 	
 	@OPERATION
 	void replyWithContext(String response, OutputContexts context) {
+		System.out.println("[Dial4JaCa] Reply received from agent");
 		this.jasonResponse = response;
 		this.jasonOutputContext = context;
 	}
 	
 	@OPERATION
 	void reply(String response) {
-		this.jasonResponse= response;
+		if (this.awaitingResponse) {
+			System.out.println("[Dial4JaCa] Reply received from agent");
+			this.jasonResponse = response;
+		} else {
+			System.out.println("[Dial4JaCa] Reply arrived late");
+		}
 	}
 	
 	@OPERATION
-	void contextBuilder(String responseId, String contextName, String lifespanCount, OpFeedbackParam<OutputContexts> outputContext) {
+	void contextBuilder(String responseId, String contextName, OpFeedbackParam<OutputContexts> outputContext) {
 	    OutputContexts context = new OutputContexts();
 	    context.setName(this.session + "/contexts/" + contextName);
-	    context.setLifespanCount(Integer.parseInt(lifespanCount));
+	    context.setLifespanCount(1);
 	    outputContext.set(context);
 	}
 
 	@Override
-	public ResponseDialogflow processarIntencao(String responseId, String intentName, HashMap<String, Object> parameters, List<OutputContexts> outputContexts, String session) {
+	public ResponseDialogflow intentionProcessing(String responseId, String intentName, HashMap<String, Object> parameters, List<OutputContexts> outputContexts, String session) {
 		this.session = session;
+		this.jasonOutputParameters = parameters;
+		this.awaitingResponse = true;
 		ResponseDialogflow response = new ResponseDialogflow();
-		if (intentName != null) {
-			execInternalOp("createRequestBelief", responseId, intentName, parameters, outputContexts);
-			System.out.println("Definindo propriedade observavel");
-		} else {
-			System.out.println("Não foi possível definir a propriedade observavel");
-			response.setFulfillmentText("Intensão não reconhecida");
+		if (!this.generatedEvent || !this.intentEvent.equals(intentName)) {
+			this.generatedEvent = false;
+			this.intentEvent = "";
+			if (intentName != null) {
+				execInternalOp("createRequestBelief", responseId, intentName, parameters, outputContexts, session);
+				System.out.println("[Dial4JaCa] Defining observable property");
+			} else {
+				System.out.println("[Dial4JaCa] Could not set observable property");
+				response.setFulfillmentText("Unrecognized intent");
+			}
 		}
 		int i = 0;
-		while (this.jasonResponse == null && i <= 200) {
+		while (this.jasonResponse == null && i <= 300) {
 			try {
 				Thread.sleep(10);
 				i++;
@@ -79,7 +95,7 @@ public class IntegrationArtifact extends Artifact implements IAgent {
 			}
 		}
 		if (this.jasonResponse != null) {
-			System.out.println("jasonResponse " + this.jasonResponse);
+			System.out.println("[Dial4JaCa] Agent jason's response: " + this.jasonResponse);
 			response.setFulfillmentText(this.jasonResponse);
 			if (this.jasonOutputContext != null) {
 				response.addOutputContexts(this.jasonOutputContext);
@@ -90,11 +106,28 @@ public class IntegrationArtifact extends Artifact implements IAgent {
 				this.followupEventInput = null;
 			}
 			this.jasonResponse = null;
+			this.awaitingResponse = false;
+			this.generatedEvent = false;
+			this.intentEvent = "";
 		} else {
-			System.out.println("Sem jasonResponse");
-			response.setFulfillmentText("Sem resposta do agente");
+			System.out.println("[Dial4JaCa] No response from agent jason");
+			System.out.println("[Dial4JaCa] Sending an event to Dialogflow");
+			FollowupEventInput newEvent = new FollowupEventInput();
+			newEvent.setName(removeSpaces(intentName));
+			newEvent.setLanguageCode("pt-BR");
+			if (this.jasonOutputParameters != null) {
+				newEvent.setParameters(this.jasonOutputParameters);
+			}
+			response.setFollowupEventInput(newEvent);
+			this.intentEvent = intentName;
+			this.generatedEvent = true;
 		}
+		this.jasonOutputParameters = null;
 		return response;
+	}
+	
+	String removeSpaces(String phrase) {
+		return phrase.replaceAll(" ", "");
 	}
 	
 	// return a list of param(Key1, Value1)
@@ -125,7 +158,7 @@ public class IntegrationArtifact extends Artifact implements IAgent {
 		    	terms.add(l);
 		    } else {
 		    	
-		    	System.out.println("Valor do parâmetro " + key + " informados em formato desconhecido" + value.getClass());
+		    	System.out.println("[Dial4JaCa] Parameter " + key + " value reported in unknown format" + value.getClass());
 		    }
 		}
 		return ASSyntax.createList(terms);
@@ -153,17 +186,27 @@ public class IntegrationArtifact extends Artifact implements IAgent {
             return contextName;
     }
 	
-	//add to belief base a request(ResponseId, IntentName, [param(Key, Value), param(Key1, Value1)], [context(Name, LifespanCount, [param(Key2, Value2), param(Key3, Value3)])])
+	//add to belief base a request(RequestedBy, ResponseId, IntentName, [param(Key, Value), param(Key1, Value1)], [context(Name, LifespanCount, [param(Key2, Value2), param(Key3, Value3)])])
 	@INTERNAL_OPERATION
-	void createRequestBelief(String responseId, String intentName, HashMap<String, Object> parameters, List<OutputContexts> outputContexts) {
+	void createRequestBelief(String responseId, String intentName, HashMap<String, Object> parameters, List<OutputContexts> outputContexts, String session) {
 		ListTerm contextsList = null;
 		ListTerm paramBelief = null;
+		String origin = "";
 		if (outputContexts != null) {
 			contextsList = createContextBelief(outputContexts);
 		}
 		if (parameters != null) {
 			paramBelief = createParamBelief(parameters);
 		}
-		defineObsProperty("request", ASSyntax.createString(responseId), ASSyntax.createString(intentName), paramBelief, contextsList);
+		
+		/*
+		 * To detect the chatbot that originated the request, change here
+		 */
+		if(session.contains("integration-example")){
+			origin = "sampleDialogflowAgent";
+		} else {
+			origin = "undefined";
+		}
+		defineObsProperty("request", ASSyntax.createString(origin), ASSyntax.createString(responseId), ASSyntax.createString(intentName), paramBelief, contextsList);
 	}
 }

@@ -1,4 +1,4 @@
-package br.pucrs.smart.models;
+package br.pucrs.smart.Dial4JaCa.models;
 
 import java.util.HashMap;
 

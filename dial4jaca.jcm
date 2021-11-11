@@ -1,5 +1,5 @@
 /*
-    helloworld_from_jason
+    Dial4JaCa
     ---------------------------
 
     JaCaMo Application File
@@ -12,18 +12,18 @@
     <DATE>
 */
 
-mas helloworld_from_jason {
+mas dial4jaca {
 
     agent sample_agent:sample_agent.asl{
-    	focus: integration
+    	focus: dial4JaCa
     	goals: hello
     }
     
 	workspace wp{
-		artifact integration:br.pucrs.smart.IntegrationArtifact
+		artifact dial4JaCa:br.pucrs.smart.Dial4JaCa.Dial4JaCaArtifact
 	}
 	
-	platform: br.pucrs.smart.RestArtifact("--main 2181 --restPort 8080")
+	platform: br.pucrs.smart.Dial4JaCa.RestArtifact("--main 2181 --restPort 8080")
 
 }
 

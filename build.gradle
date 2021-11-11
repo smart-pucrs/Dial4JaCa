@@ -49,7 +49,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
     description 'runs the application'
     group ' JaCaMo'
     main = 'jacamo.infra.JaCaMoLauncher'
-    args 'helloworld_from_jason.jcm'
+    args 'dial4jaca.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 

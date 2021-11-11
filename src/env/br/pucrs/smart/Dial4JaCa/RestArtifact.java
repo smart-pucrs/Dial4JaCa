@@ -1,10 +1,10 @@
 /*
-	Arquivo original: https://github.com/jacamo-lang/jacamo-rest/blob/master/src/main/java/jacamo/rest/JCMRest.java
-	Alterado por: Débora Engelmann
-	03 de Maio de 2020
+	Original file: https://github.com/jacamo-lang/jacamo-rest/blob/master/src/main/java/jacamo/rest/JCMRest.java
+	Changed by: Débora Engelmann
+	May 3, 2020
 */
 
-package br.pucrs.smart;
+package br.pucrs.smart.Dial4JaCa;
 
 
 import java.io.File;
@@ -83,7 +83,7 @@ public class RestArtifact extends DefaultPlatformImpl {
                     try {
                         restPort = Integer.parseInt(a);
                     } catch (Exception e) {
-                        System.err.println("The argument for restPort is not a number.");
+                        System.err.println("[Dial4JaCa] The argument for restPort is not a number.");
                     }
 
                 if (a.equals("--main")) {
@@ -93,7 +93,7 @@ public class RestArtifact extends DefaultPlatformImpl {
                     try {
                         zkPort = Integer.parseInt(a);
                     } catch (Exception e) {
-                        System.err.println("The argument for restPort is not a number.");
+                        System.err.println("[Dial4JaCa] The argument for restPort is not a number.");
                     }
 
                 if (la.equals("--connect")) {
@@ -109,9 +109,9 @@ public class RestArtifact extends DefaultPlatformImpl {
         if (useZK) {
             if (zkHost == null) {
                 zkFactory  = startZookeeper(zkPort);
-                System.out.println("Platform (zookeeper) started on "+zkHost);
+                System.out.println("[Dial4JaCa] Platform (zookeeper) started on "+zkHost);
             } else {
-                System.out.println("Platform (zookeeper) running on "+zkHost);
+                System.out.println("[Dial4JaCa] Platform (zookeeper) running on "+zkHost);
             }
         }
         
@@ -172,10 +172,10 @@ public class RestArtifact extends DefaultPlatformImpl {
             // get a server from factory
             HttpServer s = GrizzlyHttpServerFactory.createHttpServer(restServerURI, rc);
             
-            System.out.println("JaCaMo Rest API is running on "+restServerURI);
+            System.out.println("[Dial4JaCa] JaCaMo Rest API is running on "+restServerURI);
             return s;
         } catch (javax.ws.rs.ProcessingException e) {           
-            System.out.println("trying next port for rest server "+(port+1)+". e="+e);
+            System.out.println("[Dial4JaCa] trying next port for rest server "+(port+1)+". e="+e);
             return startRestServer(port+1);
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,7 +207,7 @@ public class RestArtifact extends DefaultPlatformImpl {
             getZKClient().create().creatingParentsIfNeeded().forPath(JaCaMoZKDFNodeId);
             return factory;
         } catch (java.net.BindException e) {
-            System.err.println("Cannot start zookeeper, port "+port+" already used!");
+            System.err.println("[Dial4JaCa] Cannot start zookeeper, port "+port+" already used!");
             return null;
         } catch (Exception e) {
             e.printStackTrace();

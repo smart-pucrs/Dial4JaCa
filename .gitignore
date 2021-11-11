@@ -21,3 +21,6 @@ build
 *.log
 .stop___MAS
 *~
+
+# OS files
+*.DS_Store

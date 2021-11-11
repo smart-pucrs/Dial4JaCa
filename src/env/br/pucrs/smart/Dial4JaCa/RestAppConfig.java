@@ -1,10 +1,10 @@
 /*
-	Arquivo original: https://github.com/jacamo-lang/jacamo-rest/blob/master/src/main/java/jacamo/rest/RestAppConfig.java
-	Alterado por: Débora Engelmann
-	03 de Maio de 2020
+	Original File: https://github.com/jacamo-lang/jacamo-rest/blob/master/src/main/java/jacamo/rest/RestAppConfig.java
+	Changed by: Débora Engelmann
+	May 3, 2020
 */
 
-package br.pucrs.smart;
+package br.pucrs.smart.Dial4JaCa;
 
 import java.util.HashMap;
 
