@@ -16,6 +16,9 @@ build
 *.zip
 *.tar.gz
 *.rar
+!src/resources/Integration-Example.zip
+!src/resources/classes.zip
+!src/resources/Models.jar
 
 # jacamo related
 *.log
